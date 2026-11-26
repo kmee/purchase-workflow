@@ -10,16 +10,14 @@ class TestPurchaseRequisitionOrderRemainingQty(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.requisition_type = cls.env["purchase.requisition.type"].create(
-            {"name": "Test type", "quantity_copy": "remaining_qty"}
-        )
         cls.product = cls.env["product.product"].create({"name": "Test product"})
         cls.partner = cls.env["res.partner"].create({"name": "Mr Odoo"})
         cls.user = cls.env.ref("base.user_admin")
 
     def _create_purchase_requisition(self):
         requisition_form = Form(self.env["purchase.requisition"])
-        requisition_form.type_id = self.requisition_type
+        requisition_form.requisition_type = "blanket_order"
+        requisition_form.use_remaining_qty = True
         requisition_form.user_id = self.user
         requisition_form.vendor_id = self.partner
         with requisition_form.line_ids.new() as line_form:

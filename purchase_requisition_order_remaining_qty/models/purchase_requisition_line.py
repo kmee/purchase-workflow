@@ -21,9 +21,7 @@ class PurchaseRequisitionLine(models.Model):
     def _compute_proposed_qty(self):
         for item in self:
             item.proposed_qty = sum(
-                item.requisition_id.purchase_ids.filtered(
-                    lambda x: x.state not in ("cancel")
-                )
+                item.requisition_id.purchase_ids.filtered(lambda x: x.state != "cancel")
                 .order_line.filtered(
                     lambda x, item=item: x.product_id == item.product_id
                 )
@@ -33,7 +31,7 @@ class PurchaseRequisitionLine(models.Model):
     def _prepare_purchase_order_line(
         self, name, product_qty=0.0, price_unit=0.0, taxes_ids=False
     ):
-        if self.requisition_id.is_quantity_copy == "remaining_qty":
+        if self.requisition_id.use_remaining_qty:
             product_qty = self.product_qty - self.proposed_qty
         return super()._prepare_purchase_order_line(
             name=name,

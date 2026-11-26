@@ -10,6 +10,9 @@
             ref="purchase_requisition.view_purchase_requisition_form"
         />
         <field name="arch" type="xml">
+            <field name="requisition_type" position="after">
+                <field name="use_remaining_qty" readonly="state == 'done'" />
+            </field>
             <xpath expr="//field[@name='qty_ordered']" position="after">
                 <field name="proposed_qty" optional="hide" />
             </xpath>
