@@ -45,6 +45,7 @@ class TestPurchaseOrderLineEffectiveDates(TransactionCase):
         """Check effective dates are computed correctly."""
         self.purchase.button_confirm()
         # No Receipt
+        self.assertFalse(self.purchase.last_effective_date)
         self.assertFalse(self.purchase.order_line.effective_date)
         self.assertFalse(self.purchase.order_line.last_effective_date)
 
@@ -68,6 +69,10 @@ class TestPurchaseOrderLineEffectiveDates(TransactionCase):
                         ),
                     }
                 ],
+            )
+            self.assertEqual(
+                self.purchase.last_effective_date,
+                fields.Datetime.from_string(first_delivery_dtt),
             )
 
         # Second delivery - Advance time
@@ -95,3 +100,43 @@ class TestPurchaseOrderLineEffectiveDates(TransactionCase):
                     }
                 ],
             )
+            self.assertEqual(
+                self.purchase.last_effective_date,
+                fields.Datetime.from_string(second_delivery_dtt),
+            )
+
+    def test_last_effective_date_with_lines_without_receipt(self):
+        """An order with received and not received lines has a last date."""
+        self.purchase.write(
+            {
+                "order_line": [
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": self.product.id,
+                            "product_qty": 5.0,
+                            "product_uom": self.product.uom_id.id,
+                        },
+                    )
+                ]
+            }
+        )
+        self.purchase.button_confirm()
+        first_line, second_line = self.purchase.order_line
+        delivery_dtt = "2026-04-01 10:00:00"
+        with freeze_time(delivery_dtt):
+            picking = self.purchase.picking_ids
+            picking.move_ids.filtered(lambda m: m.purchase_line_id == first_line).write(
+                {"quantity": 10.0}
+            )
+            picking.move_ids.filtered(
+                lambda m: m.purchase_line_id == second_line
+            ).write({"quantity": 0.0})
+            picking.with_context(skip_backorder=True).button_validate()
+        self.assertTrue(first_line.last_effective_date)
+        self.assertFalse(second_line.last_effective_date)
+        self.assertEqual(
+            self.purchase.last_effective_date,
+            fields.Datetime.from_string(delivery_dtt),
+        )

@@ -7,6 +7,9 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form" />
         <field name="arch" type="xml">
+            <field name="effective_date" position="after">
+                <field name="last_effective_date" invisible="not last_effective_date" />
+            </field>
             <xpath expr="//list/field[@name='date_planned']" position="after">
                 <field name="effective_date" optional="hide" />
                 <field name="last_effective_date" optional="hide" />

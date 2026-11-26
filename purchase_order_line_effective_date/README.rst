@@ -1,7 +1,3 @@
-.. image:: https://odoo-community.org/readme-banner-image
-   :target: https://odoo-community.org/get-involved?utm_source=readme
-   :alt: Odoo Community Association
-
 ==================================
 Purchase Order Line Effective Date
 ==================================
@@ -17,7 +13,7 @@ Purchase Order Line Effective Date
 .. |badge1| image:: https://img.shields.io/badge/maturity-Production%2FStable-green.png
     :target: https://odoo-community.org/page/development-status
     :alt: Production/Stable
-.. |badge2| image:: https://img.shields.io/badge/license-AGPL--3-blue.png
+.. |badge2| image:: https://img.shields.io/badge/licence-AGPL--3-blue.png
     :target: http://www.gnu.org/licenses/agpl-3.0-standalone.html
     :alt: License: AGPL-3
 .. |badge3| image:: https://img.shields.io/badge/github-OCA%2Fpurchase--workflow-lightgray.png?logo=github
@@ -33,7 +29,9 @@ Purchase Order Line Effective Date
 |badge1| |badge2| |badge3| |badge4| |badge5|
 
 This module implements the effective_date and last_effective_date fields
-in purchase order lines, allowing you to view the delivery dates.
+in purchase order lines, allowing you to view the delivery dates. The
+purchase order also gets a stored ``last_effective_date`` field with the
+latest completion date of its receipts.
 
 **Table of contents**
 
